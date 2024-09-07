@@ -1,0 +1,2 @@
+# osmint
+OpenStreetMap INTelligence
