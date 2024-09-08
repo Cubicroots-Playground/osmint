@@ -3,7 +3,8 @@ import osm
 def get_coordinates_for_user(user_display_name: str) -> dict:
     coordinates_per_day = {}
 
-    change_sets = osm.get_changesets(user_display_name)
+    change_sets = osm.get_changesets(user_display_name, limit=10)
+    print(len(change_sets))
     for change_set in change_sets:
         if change_set.area.size() == 0.0:
             # Change set is single point, add it.

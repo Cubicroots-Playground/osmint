@@ -66,11 +66,11 @@ def _changesets_from_xml(xml: et.Element) -> list[ChangeSet]:
 
     return sets
 
-def _get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None) -> et.Element:
-    url =  f'https://www.openstreetmap.org/api/0.6/changesets/?display_name={urllib.parse.quote(user_display_name)}'
+def _get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None, limit: int = 100) -> et.Element:
+    url =  f'https://www.openstreetmap.org/api/0.6/changesets/?display_name={urllib.parse.quote(user_display_name)}&limit={limit}'
     if created_before:
         # First time is "closed after" time.
-        url += 'time=2001-01-01,' + urllib.parse.quote(created_before.isoformat())
+        url += '&time=2001-01-01,' + urllib.parse.quote(created_before.isoformat())
 
     response = requests.get(
        url
@@ -101,8 +101,8 @@ def _get_changeset_content(change_set_id: int) -> et.Element:
         )
     return et.fromstring(response.text)
 
-def get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None) -> list[ChangeSet]:
-    xml = _get_changesets(user_display_name, created_before=created_before)
+def get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None, limit: int = 100) -> list[ChangeSet]:
+    xml = _get_changesets(user_display_name, created_before=created_before, limit=limit)
     return _changesets_from_xml(xml)
 
 def get_changes(change_set_id: int) -> list[Change]:
