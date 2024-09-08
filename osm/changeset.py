@@ -5,6 +5,7 @@ import datetime
 from typing import Optional
 import urllib.parse
 
+# Area defines a rectangle.
 class Area:
     def __init__(
             self,
@@ -21,6 +22,7 @@ class Area:
     def size(self) -> float:
         return (self.max_lat-self.min_lat)*(self.max_long-self.min_long)
 
+# ChangeSet defines a changeset according to the OSM API.
 class ChangeSet:
     def __init__(
         self,
@@ -31,6 +33,20 @@ class ChangeSet:
         self.id = id
         self.created_at = created_at
         self.area = area
+
+# Change defines a change according to the OSM API.
+class Change:
+    def __init__(
+            self,
+            id: int,
+            created_at: datetime.datetime,
+            lat: float,
+            long: float,
+    ):
+        self.id = id
+        self.created_at = created_at
+        self.lat = lat
+        self.long = long
 
 def _changesets_from_xml(xml: et.Element) -> list[ChangeSet]:
     sets = []
@@ -50,7 +66,7 @@ def _changesets_from_xml(xml: et.Element) -> list[ChangeSet]:
 
     return sets
 
-def _get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None):
+def _get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None) -> et.Element:
     url =  f'https://www.openstreetmap.org/api/0.6/changesets/?display_name={urllib.parse.quote(user_display_name)}'
     if created_before:
         # First time is "closed after" time.
@@ -61,7 +77,34 @@ def _get_changesets(user_display_name: str, created_before: Optional[datetime.da
         )
     return et.fromstring(response.text)
 
+def _changes_from_xml(xml: et.Element) -> list[Change]:
+    changes = []
+
+    for create_node in xml:
+        for child in create_node:
+            if 'lon' in child.attrib:
+                changes.append(Change(
+                    int(child.attrib['id']),
+                    datetime.datetime.strptime(child.attrib['timestamp'], '%Y-%m-%dT%H:%M:%S%z'),
+                    float(child.attrib['lat']),
+                    float(child.attrib['lon']),
+                ))
+
+    return changes
+
+
+def _get_changeset_content(change_set_id: int) -> et.Element:
+    url =  f'https://www.openstreetmap.org/api/0.6/changeset/{change_set_id}/download'
+
+    response = requests.get(
+       url
+        )
+    return et.fromstring(response.text)
 
 def get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None) -> list[ChangeSet]:
     xml = _get_changesets(user_display_name, created_before=created_before)
     return _changesets_from_xml(xml)
+
+def get_changes(change_set_id: int) -> list[Change]:
+    xml = _get_changeset_content(change_set_id)
+    return _changes_from_xml(xml)
