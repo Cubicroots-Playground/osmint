@@ -1,23 +1,19 @@
 import analyze
 import pandas
 import plotly.express as px
+import plotly.io as pio
 
-coordinates = analyze.get_coordinates_for_user("Fizzie41")
+#pio.renderers.default = "chrome"
 
+points = analyze.get_coordinates_for_user_count("Fizzie41")
 coordinates_list = []
 
-for d in coordinates:
-    for c in coordinates[d]:
-        c = list(c)
+for point, cnt in points.items():
         coordinates_list.append(
-            {'lat': c[0], 'lon': c[1], 'cnt': 1}
+            {'lat': point.lat, 'lon': point.lon, 'cnt': cnt}
         )
 
 df = pandas.DataFrame(coordinates_list, columns=['lat', 'lon', 'cnt'])
-
-print(df)
-
-color_scale = [(0, 'orange'), (1,'red')]
 
 def plot_world_map():
     fig = px.scatter_geo(df, 
@@ -35,11 +31,12 @@ def plot_heat_map():
                         lon="lon", 
                         z="cnt",
                         radius=10,
+                        zoom=2,
                         )
 
-    fig.update_layout(mapbox_style="carto-positron")
+    fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     fig.show()
 
-#plot_heat_map()
+plot_heat_map()
 plot_world_map()
