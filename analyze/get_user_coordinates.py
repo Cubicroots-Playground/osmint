@@ -7,10 +7,10 @@ class Point:
         self.lon = lon
         
 
-def get_coordinates_for_user_by_day(user_display_name: str) -> dict[str, list[Point]]:
+def get_coordinates_for_user_by_day(user_display_name: str, change_set_limit: int = 10) -> dict[str, list[Point]]:
     coordinates_per_day = {}
 
-    change_sets = osm.get_changesets(user_display_name, limit=100)
+    change_sets = osm.get_changesets(user_display_name, limit=change_set_limit)
     for change_set in change_sets:
         if change_set.area.size() == 0.0:
             # Change set is single point, add it.
@@ -37,9 +37,9 @@ def get_coordinates_for_user_by_day(user_display_name: str) -> dict[str, list[Po
 
     return coordinates_per_day
 
-def get_coordinates_for_user_count(user_disply_name: str) -> dict[Point, int]:
+def get_coordinates_for_user_count(user_disply_name: str, change_set_limit: int = 10) -> dict[Point, int]:
     counted_points = {}
-    coordinates = get_coordinates_for_user_by_day(user_display_name=user_disply_name)
+    coordinates = get_coordinates_for_user_by_day(user_display_name=user_disply_name, change_set_limit=change_set_limit)
 
     for day in coordinates:
         for point in coordinates[day]:
