@@ -1,17 +1,18 @@
 import analyze
 import pandas
 import plotly.express as px
-import plotly.io as pio
 import plotly.graph_objects as go
 import sys
 import random
+import osm
 
 if sys.argv[1] == "" or sys.argv[2] == "":
      print("use like this: 'python3 main.py $USERNAME $CHANGE_SET_LIMIT'")
 
-points_per_day = analyze.get_coordinates_for_user_by_day(sys.argv[1], change_set_limit=int(sys.argv[2]))
-#points = analyze.get_coordinates_for_user_count(sys.argv[1], change_set_limit=int(sys.argv[2]))
 points = {}
+points_per_day = {}
+points_per_day = analyze.get_coordinates_for_user_by_day(sys.argv[1], change_set_limit=int(sys.argv[2]))
+points = analyze.get_coordinates_for_user_count(sys.argv[1], change_set_limit=int(sys.argv[2]))
 coordinates_list = []
 
 for point, cnt in points.items():
@@ -50,6 +51,8 @@ def plot_daily_world_map():
 
     for day in points_per_day:
         color = random.choice(colors)
+
+        # Print dots.
         for point in points_per_day[day]:
             fig.add_trace(go.Scattergeo(
                 lon = [point.lon],
@@ -61,14 +64,15 @@ def plot_daily_world_map():
                     color = color,
                 )))
             
-        fig.add_trace(
-        go.Scattergeo(
-            lon = [points_per_day[day][i].lon for i in range(len(points_per_day[day]))],
-            lat = [points_per_day[day][i].lat for i in range(len(points_per_day[day]))],
-            mode = 'lines',
-            line = dict(width = 2,color = color),
-        )
-    )
+        # Print lines between dots of the same day.
+        #fig.add_trace(
+        #go.Scattergeo(
+        #    lon = [points_per_day[day][i].lon for i in range(len(points_per_day[day]))],
+        #    lat = [points_per_day[day][i].lat for i in range(len(points_per_day[day]))],
+        #    mode = 'lines',
+        #    line = dict(width = 2,color = color),
+        #)
+        #)
 
     fig.update_layout(
         mapbox_style="open-street-map"
@@ -79,4 +83,6 @@ def plot_daily_world_map():
 #plot_heat_map()
 #plot_world_map()
 
-plot_daily_world_map()
+#plot_daily_world_map()
+
+osm.store_changesets(user_display_name=sys.argv[1])

@@ -22,18 +22,6 @@ class Area:
     def size(self) -> float:
         return (self.max_lat-self.min_lat)*(self.max_long-self.min_long)
 
-# ChangeSet defines a changeset according to the OSM API.
-class ChangeSet:
-    def __init__(
-        self,
-        id: int,
-        created_at: datetime.datetime,
-        area: Area,
-    ):
-        self.id = id
-        self.created_at = created_at
-        self.area = area
-
 # Change defines a change according to the OSM API.
 class Change:
     def __init__(
@@ -47,6 +35,20 @@ class Change:
         self.created_at = created_at
         self.lat = lat
         self.long = long
+
+# ChangeSet defines a changeset according to the OSM API.
+class ChangeSet:
+    def __init__(
+        self,
+        id: int,
+        created_at: datetime.datetime,
+        area: Area,
+        changes: list[Change]=None,
+    ):
+        self.id = id
+        self.created_at = created_at
+        self.area = area
+        self.changes = changes
 
 def _changesets_from_xml(xml: et.Element) -> list[ChangeSet]:
     sets = []
