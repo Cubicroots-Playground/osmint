@@ -4,7 +4,7 @@ import pandas
 # heatmap plots a heatmap based on the given data frame.
 #
 # The dataframe needs columns 'lat', 'lon' and 'cnt'.
-def heatmap(
+def plot(
         df: pandas.DataFrame,
         img_out: str = None,
         ):
