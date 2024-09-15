@@ -1,3 +1,4 @@
 cache/**
 **.pyc
-.osmint-storage
+.osmint-cache
+.venv/**
