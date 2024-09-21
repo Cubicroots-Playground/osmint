@@ -41,3 +41,31 @@ def _changesets_to_points(
             ))
 
     return points
+
+def changesets_to_points_per_day(
+        changesets: list[ChangeSet],
+) -> dict[str, list[Point]]:
+    coordinates_per_day = {}
+    for change_set in changesets:
+        if change_set.area.size() == 0.0:
+            # Change set is single point, add it.
+            date = change_set.created_at.strftime('%Y-%m-%d')
+
+            if date not in coordinates_per_day:
+                coordinates_per_day[date] = []
+
+            coordinates_per_day[date].append(Point(change_set.area.min_lat, change_set.area.min_long))
+
+        else:
+            for change in change_set.changes:
+                date = change.created_at.strftime('%Y-%m-%d')
+
+                if date not in coordinates_per_day:
+                    coordinates_per_day[date] = []
+
+                coordinates_per_day[date].append(Point(change.lat, change.long))
+
+            continue
+
+
+    return coordinates_per_day
