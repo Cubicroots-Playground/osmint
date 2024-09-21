@@ -29,3 +29,11 @@ The following command will plot an interactive world map with the changesets and
 ```bash
 python3 main.py plot heatmap ${USERNAME}
 ```
+
+### Delete cache
+
+To get rid of your locally cached data:
+
+```bash
+python3 main.py cache delete
+```
