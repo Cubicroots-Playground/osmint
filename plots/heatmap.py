@@ -20,6 +20,6 @@ def plot(
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
     if img_out:
-        fig.write_image(img_out)
+        fig.write_image(img_out, width=2250, height=1500)
     else:
         fig.show()

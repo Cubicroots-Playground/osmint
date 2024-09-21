@@ -11,3 +11,4 @@ app = typer.Typer()
 @app.command("delete")
 def delete():
     shutil.rmtree(".osmint-cache")
+    rprint(f"[green]Cache deleted[/green]")
