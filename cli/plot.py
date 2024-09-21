@@ -1,7 +1,7 @@
 import typer
 from typing_extensions import Annotated, Optional
 from osm import load
-from analyze.changesets import changesets_to_heatmap_df, changesets_to_points_per_day
+from analyze.changesets import changesets_to_heatmap_df, changesets_to_daily_colored_df
 from plots import heatmap as hm
 from plots import daytraces as dtraces
 from rich.console import Console
@@ -50,7 +50,7 @@ def daytraces(
             console.print(f"No changesets in cache for user {username}. Download data with [red bold italic]'download changesets {username}'[/red bold italic].", style="bold red")
             return
 
-        data = changesets_to_points_per_day(changesets)
+        data = changesets_to_daily_colored_df(changesets)
         console.log("Data processed.")
 
         dtraces.plot(console, data, img_out=img_out)

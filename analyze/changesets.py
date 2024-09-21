@@ -1,6 +1,9 @@
 from osm import ChangeSet
 import pandas
 from . import Point
+import random
+
+colors = ['red', 'green', 'blue', 'purple', 'yellow', 'brown', 'black', 'pink', 'orange', 'grey']
 
 def changesets_to_heatmap_df(
         changesets: list[ChangeSet],
@@ -42,30 +45,39 @@ def _changesets_to_points(
 
     return points
 
-def changesets_to_points_per_day(
+def changesets_to_daily_colored_df(
         changesets: list[ChangeSet],
-) -> dict[str, list[Point]]:
-    coordinates_per_day = {}
+) -> pandas.DataFrame:
+    coordinates_list = []
+    colors_per_day = {}
+
     for change_set in changesets:
+        date = change_set.created_at.strftime('%Y-%m-%d')
+        if date not in colors_per_day:
+            colors_per_day[date] = random.choice(colors)
+        color = colors_per_day[date]            
+
         if change_set.area.size() == 0.0:
             # Change set is single point, add it.
-            date = change_set.created_at.strftime('%Y-%m-%d')
-
-            if date not in coordinates_per_day:
-                coordinates_per_day[date] = []
-
-            coordinates_per_day[date].append(Point(change_set.area.min_lat, change_set.area.min_long))
-
+            coordinates_list.append({
+                'lat': change_set.area.min_lat,
+                'lon': change_set.area.min_long,
+                'color': color,
+                'date': date,
+            })
         else:
             for change in change_set.changes:
                 date = change.created_at.strftime('%Y-%m-%d')
+                if date not in colors_per_day:
+                    colors_per_day[date] = random.choice(colors)
+                color = colors_per_day[date] 
 
-                if date not in coordinates_per_day:
-                    coordinates_per_day[date] = []
+                coordinates_list.append({
+                    'lat': change.lat,
+                    'lon': change.long,
+                    'color': color,
+                    'date': date,
+                })
 
-                coordinates_per_day[date].append(Point(change.lat, change.long))
 
-            continue
-
-
-    return coordinates_per_day
+    return pandas.DataFrame(coordinates_list, columns=['lat', 'lon', 'color', 'date'])
