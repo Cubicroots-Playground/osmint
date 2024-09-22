@@ -12,6 +12,7 @@ app = typer.Typer()
 def heatmap(
     username: Annotated[str, typer.Argument(help="The display name of the user to plot data for.")],
     img_out: Annotated[Optional[str], typer.Option(help="Path to store image at. If not set interactive browser rendering will be used")] = None,
+    zoom: Annotated[Optional[float], typer.Option(help="Overwrite calculated zoom level.")] = None,
 ):
     """
     Plots a heatmap of coordinates edited by the user.
@@ -28,7 +29,7 @@ def heatmap(
         df = changesets_to_heatmap_df(changesets)
         console.log("Data processed.")
 
-        hm.plot(df, img_out=img_out)
+        hm.plot(console, df, img_out=img_out, zoom=zoom)
         console.log("Data plotted.")
         if img_out:
             console.log(f"Image written to {img_out}.")
@@ -36,7 +37,8 @@ def heatmap(
 @app.command("daytraces")
 def daytraces(
     username: Annotated[str, typer.Argument(help="The display name of the user to plot data for.")],
-    img_out: Annotated[Optional[str], typer.Option(help="Path to store image at. If not set interactive browser rendering will be used")] = None,
+    img_out: Annotated[Optional[str], typer.Option(help="Path to store image at. If not set interactive browser rendering will be used.")] = None,
+    zoom: Annotated[Optional[float], typer.Option(help="Overwrite calculated zoom level.")] = None,
 ):
     """
     Plots a map where coordinates edited by the user at the same day are interconnected with lines.
@@ -53,6 +55,6 @@ def daytraces(
         data = changesets_to_daily_colored_df(changesets)
         console.log("Data processed.")
 
-        dtraces.plot(console, data, img_out=img_out)
+        dtraces.plot(console, data, img_out=img_out, zoom=zoom)
         console.log("Data plotted.")
         
