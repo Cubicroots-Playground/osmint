@@ -63,4 +63,4 @@ def plot(
     if img_out:
         fig.write_image(img_out, width=2250, height=1500)
     else:
-        fig.show(auto_open=True)
+        fig.show(config={"scrollZoom": True})
