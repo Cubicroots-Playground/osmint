@@ -4,6 +4,12 @@ OpenStreetMap INTelligence. Playing with OSM data.
 
 ## Usage
 
+Install dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
+
 First store data into the local cache in order to avoid re-fetching it for every plot.
 
 Use the `--help` flag on any command to get detailed information and options on its usage.
@@ -51,4 +57,14 @@ To get rid of your locally cached data:
 
 ```bash
 python3 main.py cache delete
+```
+
+## Development
+
+### Dependencies
+
+`requirements.txt` is generated with:
+
+```bash
+pipreqs . --force
 ```
