@@ -17,9 +17,8 @@ def store_changesets(
     console.log(f"Downloaded {len(changesets)} changesets.")
 
     for changeset in changesets:
-        if changeset.area.size() != 0.0:
-            changes = get_changes(change_set_id=changeset.id)
-            changeset.changes = changes
+        changes = get_changes(change_set_id=changeset.id)
+        changeset.changes = changes
 
     _write_to_file(changesets, f".osmint-cache/changesets_{user_display_name}")
 
