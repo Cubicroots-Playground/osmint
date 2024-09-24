@@ -20,10 +20,10 @@ def changesets_to_heatmap_df(
     coordinates_list = []
     for point, cnt in points_counted.items():
         coordinates_list.append(
-            {'lat': point.lat, 'lon': point.lon, 'cnt': cnt},
+            {'lat': point.lat, 'lon': point.lon, 'cnt': cnt, 'type': point.attrs.get('type', "unknown"), 'id': point.attrs.get('id', "-")},
         )
 
-    return pandas.DataFrame(coordinates_list, columns=['lat', 'lon', 'cnt'])
+    return pandas.DataFrame(coordinates_list, columns=['lat', 'lon', 'cnt', 'type', 'id'])
 
 
 def _changesets_to_points(
@@ -36,11 +36,13 @@ def _changesets_to_points(
                 points.append(Point(
                     change.lat,
                     change.long,
+                    attrs={"type": change.type, "id": change.id},
                 ))
         else:
             points.append(Point(
                 changeset.area.min_lat,
                 changeset.area.min_long,
+                attrs={"type": "unknown", "id": changeset.id},
             ))
 
     return points

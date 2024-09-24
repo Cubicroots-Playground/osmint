@@ -39,6 +39,8 @@ def plot(
                         z="cnt",
                         radius=10,
                         zoom=zoom,
+                        hover_name="id",
+                        hover_data={"cnt": False, "lon": False, "lat": False, "type": True},
                         center=dict(lat=center[1], lon=center[0])
                         )
 

@@ -30,11 +30,16 @@ class Change:
             created_at: datetime.datetime,
             lat: float,
             long: float,
+            # One of: delete, modify, create
+            type: str = None,
+            changed_tags: list[str] = None
     ):
         self.id = id
         self.created_at = created_at
         self.lat = lat
         self.long = long
+        self.type = type
+        self.changed_tags = changed_tags
 
 # ChangeSet defines a changeset according to the OSM API.
 class ChangeSet:
@@ -82,14 +87,15 @@ def _get_changesets(user_display_name: str, created_before: Optional[datetime.da
 def _changes_from_xml(xml: et.Element) -> list[Change]:
     changes = []
 
-    for create_node in xml:
-        for child in create_node:
+    for node in xml:
+        for child in node:
             if 'lon' in child.attrib:
                 changes.append(Change(
                     int(child.attrib['id']),
                     datetime.datetime.strptime(child.attrib['timestamp'], '%Y-%m-%dT%H:%M:%S%z'),
                     float(child.attrib['lat']),
                     float(child.attrib['lon']),
+                    type=node.tag,
                 ))
 
     return changes

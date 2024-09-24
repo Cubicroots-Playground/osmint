@@ -2,10 +2,10 @@ import osm
 
 class Point:
 
-    def __init__(self, lat: float, lon: float) -> None:
+    def __init__(self, lat: float, lon: float, attrs: dict = {}) -> None:
         self.lat = lat
         self.lon = lon
-        
+        self.attrs = attrs
 
 def get_coordinates_for_user_by_day(user_display_name: str, change_set_limit: int = 10) -> dict[str, list[Point]]:
     coordinates_per_day = {}
