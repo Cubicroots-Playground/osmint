@@ -104,8 +104,23 @@ def _get_changeset_content(change_set_id: int) -> et.Element:
     return et.fromstring(response.text)
 
 def get_changesets(user_display_name: str, created_before: Optional[datetime.datetime] = None, limit: int = 100) -> list[ChangeSet]:
-    xml = _get_changesets(user_display_name, created_before=created_before, limit=limit)
-    return _changesets_from_xml(xml)
+    changesets = []
+
+    i = 100
+    while i <= limit:
+        l = 100
+        if i > limit:
+            l = i - limit
+
+        if len(changesets) > 0:
+            created_before = changesets[len(changesets)-1].created_at - datetime.timedelta(0,1)
+
+        xml = _get_changesets(user_display_name, created_before=created_before, limit=l)
+        changesets += _changesets_from_xml(xml)
+
+        i += 100
+
+    return changesets
 
 def get_changes(change_set_id: int) -> list[Change]:
     xml = _get_changeset_content(change_set_id)

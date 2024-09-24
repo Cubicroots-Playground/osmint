@@ -1,14 +1,20 @@
 import os
 import pickle
 from . import get_changes, get_changesets
+from rich.console import Console
 
-def store_changesets(user_display_name: str, changesets_limit: int = 100):
+def store_changesets(
+        console: Console,
+        user_display_name: str, 
+        changesets_limit: int = 100):
     try:
         os.mkdir(".osmint-cache")
     except FileExistsError:
         pass
     
     changesets = get_changesets(user_display_name=user_display_name, limit=changesets_limit)
+
+    console.log(f"Downloaded {len(changesets)} changesets.")
 
     for changeset in changesets:
         if changeset.area.size() != 0.0:

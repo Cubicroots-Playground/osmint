@@ -14,5 +14,5 @@ def changesets(
     ):
     console = Console()
     with console.status("[grey][italic]Downloading data ...[/italic][/grey]"):
-        store.store_changesets(username, changesets_limit=changesets_limit)
+        store.store_changesets(console, username, changesets_limit=changesets_limit)
     rprint(f"[green]Downloaded {changesets_limit} changesets for user [italic][bold]{username}[/bold][/italic][/green]")
